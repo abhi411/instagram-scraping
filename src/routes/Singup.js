@@ -107,7 +107,7 @@ const Signup = () => {
                     Sign Up
                   </button>
                 </form>
-                <p class="login-card-footer-text">Don't have an account? <a href='javascript:void(0)' onClick={()=> setLogin(false)} href="#!" class="text-reset">Login here</a></p>
+                <p class="login-card-footer-text">Do you have an account? <a href='javascript:void(0)' onClick={()=> setLogin(false)} href="#!" class="text-reset">Login here</a></p>
                 <nav class="login-card-footer-nav">
                   <a href="#!">Terms of use.</a>
                   <a href="#!">Privacy policy</a>
