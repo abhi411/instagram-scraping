@@ -416,8 +416,7 @@ export default function UserTable() {
                       key={row.name}
                       selected={isItemSelected}
                     >
-                      <TableCell   style={{color:'blue'}} component={Link}
-                      to={ "/admin/topicDetails"} align="left">{row.name}</TableCell>
+                      <TableCell   style={{color:'blue'}}  align="left">{row.name}</TableCell>
                       <TableCell align="center">{row.calories}</TableCell>
                       <TableCell align="center">{row.carbs}</TableCell>
                       <TableCell align="center">{row.fat}</TableCell>
