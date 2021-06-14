@@ -26,12 +26,14 @@ import SearchBar from "material-ui-search-bar";
 import {  BrowserRouter as Router, Route, Link } from "react-router-dom";
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import FormDialog from "./FormDialog";
+import {getRequest} from "../services/request";
 import React, {useEffect } from 'react';
 import {toast} from 'react-toastify';
 import TextField from '@material-ui/core/TextField';
 import {
   useHistory 
  } from "react-router-dom";
+
 var rows= []
 
 const useStyles = makeStyles((theme) => ({
@@ -66,7 +68,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-export default function RequestTable() {
+export default function UserTable() {
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
@@ -78,30 +80,31 @@ export default function RequestTable() {
   const [fromDate, setfromDate] = React.useState(new Date());
   const [toDate, settoDate] = React.useState(new Date());
   const [selectedDate, setSelectedDate] = React.useState(new Date());
-
+ const history = useHistory();
   const handleDateChange = (date) => {
     setSelectedDate(date);
   };
- 
-  let history = useHistory();
+
   const [rowData, setRows] = React.useState([]);
-  let role =  localStorage.getItem('role');
-  let user =  localStorage.getItem('customerId');
-  function createData(name, calories,datetime, fat, carbs,status, btn) {
-    return { name, calories,datetime, fat, carbs,status, btn };
+  let userId =  localStorage.getItem('userId');
+  const getTopics = () =>{
+    console.log("customer")
+    getRequest(userId)
+    .then((response) => {
+       if(response && response.error && response.error.message == 'Authorization Required'){
+           console.log('slllll*********************')
+       }
+       else{
+        rows= response && response.data ? response.data : []
+        setRows(rows)
+        console.log("response",rows)
+      
+       }
+    })
   }
   
-  const rows = [
-    createData('1', 'John Doe', '12-Mar-2021 14:52','12-Mar-2021 14:52', '700','Pending', uploadIcon()),
-    createData('2', 'Arip', '11-Feb-2021 11:01','12-Mar-2021 14:52','600', 'Pending' ,uploadIcon()),
-    createData('3', '@Mx', '21-Jan-2021 01:58','12-Mar-2021 14:52', '4000','Pending',  uploadIcon()),
-    createData('4', 'Db', '27-Mar-2021 17:24','12-Mar-2021 14:52',  '3677','Pending',uploadIcon()),
-    createData('5', 'Eric', '25-Dec-2020 23:40','12-Mar-2021 14:52', '899','Pending', uploadIcon()),
-   ];
   function uploadIcon(){
-    return <Button variant="contained" color="primary">
-    View Details
-  </Button>
+    return <ArrowForwardIosIcon color="secondary" />
   }
   function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -139,9 +142,19 @@ export default function RequestTable() {
     { id: 'btn', numeric: false, disablePadding: false, label: 'View Details' }
   ];
 
+  // function removeDelete(param) {
+  //   return new Promise(resolve => {
+  //     for(let i = 0; i < param.length; i++) {
+  //       if(param[i].id === 'Delete') {
+  //         param.splice(i, 1)
+  //         resolve(param)
+  //         break;
+  //       }
+  //     }
+  //   })
+  // }
   
-  
-   function RequestTableHead(props) {
+   function TopicTableHead(props) {
     const { classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
     const createSortHandler = (property) => (event) => {
       onRequestSort(event, property);
@@ -152,9 +165,6 @@ export default function RequestTable() {
       <TableHead>
         <TableRow>
           {headCells.map((headCell) => (
-            role != 'admin' && headCell.id === 'Delete' ? 
-            null
-            : 
             <TableCell
               key={headCell.id}
               align={headCell.numeric ? 'right' : 'left'}
@@ -180,7 +190,7 @@ export default function RequestTable() {
     );
   }
   
-  RequestTableHead.propTypes = {
+  TopicTableHead.propTypes = {
     classes: PropTypes.object.isRequired,
     numSelected: PropTypes.number.isRequired,
     onRequestSort: PropTypes.func.isRequired,
@@ -210,19 +220,10 @@ export default function RequestTable() {
     },
   }));
   
-  const RequestTableToolbar = (props) => {
+  const TopicTableToolbar = (props) => {
     const classes = useToolbarStyles();
     const { numSelected } = props;
-    const [dailog, setdailog] = React.useState(false);
-    
-  
-    const handleClose = () => {
-      setdailog(false)
-    }
-  
-    const handledailog = (value) => {
-      setdailog(value)
-    }
+   
     return (
       <Toolbar
         className={clsx(classes.root, {
@@ -235,20 +236,10 @@ export default function RequestTable() {
           </Typography>
         ) : (
           <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-          {
-            role == 'admin' ?
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={ () => handledailog(true) }
-              className={classes.button}
-              endIcon={<Icon></Icon>}
-            >
-              UPLOAD TOPIC
-            </Button>
-            :
-            null
-          }
+       
+            
+         
+          
             
           </Typography>
         )}
@@ -268,7 +259,7 @@ export default function RequestTable() {
         )}
         {
           dailog?
-          <FormDialog open={true} onClose={handleClose} />
+          <FormDialog open={true} onClose={handleClose} loadTopic={getTopics}/>
           :
           null
         }
@@ -276,14 +267,25 @@ export default function RequestTable() {
     );
   };
   
-  RequestTableToolbar.propTypes = {
+  TopicTableToolbar.propTypes = {
     numSelected: PropTypes.number.isRequired,
   };
   
  
  
-  const isSelected = (name) => selected.indexOf(name) !== -1;
-  const emptyRows = rowsPerPage - Math.min(rowsPerPage, rowData.length - page * rowsPerPage);
+  useEffect(() => {
+    getRequest(userId)
+      .then((response) => {
+        if(response && response.error && response.error.message == 'Authorization Required'){
+            console.log('slllll*********************')
+        }
+        rows= response && response.data ? response.data : []
+        setRows(rows)
+        console.log("response",rows)
+      })
+    }, true);
+
+  
  
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -293,7 +295,12 @@ export default function RequestTable() {
 
   const handleSelectAllClick = (event) => {
     console.log("select event ocue",event)
-   
+    // if (event.target.checked) {
+    //   const newSelecteds = rows.map((n) => n.name);
+    //   setSelected(newSelecteds);
+    //   return;
+    // }
+    // setSelected([]);
   };
 
   const requestSearch = (searchedVal) => {  
@@ -326,6 +333,12 @@ export default function RequestTable() {
     setDense(event.target.checked);
   };
 
+  
+
+  const isSelected = (name) => selected.indexOf(name) !== -1;
+
+  const emptyRows = rowsPerPage - Math.min(rowsPerPage, rowData.length - page * rowsPerPage);
+
  
   function displayDate(date) {
     console.log("djfdkjfk", new Date(date).getFullYear()+'-0'+new Date(date).getMonth()+'-'+new Date(date).getDate())
@@ -341,42 +354,35 @@ export default function RequestTable() {
     e.nativeEvent.stopImmediatePropagation();
     console.log('handleChildClick');
   }
-
-  console.log("row",rows)
+  const [dailog, setdailog] = React.useState(false);
+    
+  
+  const handleClose = () => {
+    setdailog(false)
+  }
+  function uploadIcon(){
+    return <Button variant="contained" color="primary">
+    View Details
+  </Button>
+  }
+  const handledailog = (value) => {
+    setdailog(value)
+  }
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <RequestTableToolbar numSelected={selected.length} />
-       { role == 'admin' ? 
-          <div>
-            <TextField
-            id="date"
-            label="From Date"
-            type="date"
-            defaultValue={displayDate(fromDate)}
-            value={fromDate}
-            className={classes.textField}
-            onChange = {(e,fdate) => setfrom(e)}
-            InputLabelProps={{
-              shrink: true,
-            }}
-          />
-           <TextField
-            id="date"
-            label="To Date"
-            type="date"
-            value={toDate}
-            defaultValue={displayDate(toDate)}
-            onChange = {(e,fdate) => settoDate(e.target.value)}
-            className={classes.textField}
-            InputLabelProps={{
-              shrink: true,
-            }}
-          />
-          
-        </div>
-        : null
-       }
+        <TopicTableToolbar numSelected={selected.length} />
+          <div style={{padding: 20, width: '100%'}}>
+           <Button
+              variant="contained"
+              color="secondary"
+              onClick={()=>setdailog(true)}
+              className={classes.button}
+              endIcon={<Icon></Icon>}
+            >
+              Get Followers
+            </Button>
+          </div>
         <TableContainer>
           <Table
             className={classes.table}
@@ -384,7 +390,7 @@ export default function RequestTable() {
             size={dense ? 'small' : 'medium'}
             aria-label="enhanced table"
           >
-            <RequestTableHead
+            <TopicTableHead
               classes={classes}
               numSelected={selected.length}
               order={order}
@@ -395,7 +401,7 @@ export default function RequestTable() {
             />
             <TableBody style={{position:'relative'}}>
               {
-                rows && rows.length < 1 ?
+                rowData && rowData.length < 1 ?
                   <div style={{position:"absolute",right:'45%',top:'40%'}}>
                     <h6 style={{textAlign:'center'}}>
                       No Records found
@@ -404,7 +410,7 @@ export default function RequestTable() {
                  :
                  null
               }
-              {stableSort(rows, getComparator(order, orderBy))
+              {stableSort(rowData, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
                   const isItemSelected = isSelected(row.name);
@@ -420,14 +426,17 @@ export default function RequestTable() {
                       selected={isItemSelected}
                     >
                       <TableCell   style={{color:'blue'}} component={Link}
-                      to={ "/user/request"} align="left">{row.name}</TableCell>
-                      <TableCell align="left">{row.datetime}</TableCell>
-                      <TableCell align="left">{row.calories}</TableCell>
-                      <TableCell align="left">{row.carbs}</TableCell>
-                      <TableCell align="left">{row.fat}</TableCell>
+                      to={ "/admin/topicDetails"} align="left">{index + 1}</TableCell>
+                      <TableCell align="left">{row.createdAt}</TableCell>
+                      <TableCell align="right">{row.username}</TableCell>
+                      <TableCell align="right">{row.followers}</TableCell>
+                      <TableCell align="right">{row.updatedAt}</TableCell>
                       <TableCell align="left">{row.status}</TableCell>
-                      <TableCell onClick={()=>history.push("/user/request")} align="left">{row.btn}</TableCell>
-                     
+                      <TableCell align="left" onClick={()=>history.push("/user/request?id="+row.id)} align="left">
+                      <Button variant="contained" color="primary">
+                        View Details
+                      </Button>
+                      </TableCell>
                     </TableRow>
                   );
                 })}
@@ -449,10 +458,12 @@ export default function RequestTable() {
           onChangeRowsPerPage={handleChangeRowsPerPage}
         />
       </Paper>
-      {/* <FormControlLabel
-        control={<Switch checked={dense} onChange={handleChangeDense} />}
-        label="Dense padding"
-      /> */}
+      {
+          dailog?
+          <FormDialog open={true} onClose={handleClose} loadTopic={getTopics}/>
+          :
+          null
+        }
     </div>
   );
 }

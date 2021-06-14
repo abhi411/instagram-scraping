@@ -23,9 +23,10 @@ import FilterListIcon from '@material-ui/icons/FilterList';
 import Button from '@material-ui/core/Button';
 import Icon from '@material-ui/core/Icon';
 import SearchBar from "material-ui-search-bar";
-import {  BrowserRouter as Router, Route, Link } from "react-router-dom";
+import {  BrowserRouter as Router, Route, Link,useLocation } from "react-router-dom";
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import FormDialog from "./FormDialog";
+import {getRequestById} from "../services/request";
 import React, {useEffect } from 'react';
 import {toast} from 'react-toastify';
 import TextField from '@material-ui/core/TextField';
@@ -79,30 +80,28 @@ export default function UserTable() {
   const handleDateChange = (date) => {
     setSelectedDate(date);
   };
-
+ 
+ 
   const [rowData, setRows] = React.useState([]);
-  let role =  localStorage.getItem('role');
-  let user =  localStorage.getItem('customerId');
-  function createData(name, calories, carbs,status, btn) {
-    return { name, calories, carbs,status, btn };
+  let userId =  localStorage.getItem('userId');
+  const getTopics = () =>{
+    console.log("customer")
+    getRequestById(userId)
+    .then((response) => {
+       if(response && response.error && response.error.message == 'Authorization Required'){
+           console.log('slllll*********************')
+       }
+       else{
+        rows= response && response.data ? response.data : []
+        setRows(rows)
+        console.log("response",rows)
+      
+       }
+    })
   }
   
-  const rows = [
-    createData('1', 'John Doe',  '7000'),
-    createData('2', 'Arip', '6000'),
-    createData('3', '@Mx', '4000'),
-    createData('4', 'Db', '367'),
-    createData('5', 'Eric', '899'),
-    createData('6', 'Eric adm', '799'),
-    createData('7', 'Aamla', '699'),
-    createData('8', 'Aisa', '599'),
-    createData('9', 'Albert', '499')
-
-   ];
   function uploadIcon(){
-    return <Button variant="contained" color="primary">
-    View Details
-  </Button>
+    return <ArrowForwardIosIcon color="secondary" />
   }
   function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -131,14 +130,24 @@ export default function UserTable() {
   }
   
   let headCells = [
-    { id: 'name', numeric: false, disablePadding: false, label: 'SNo' },
-    { id: 'calories', numeric: false, disablePadding: false, label: 'Userprofile Name' },
-    { id: 'fat', numeric: false, disablePadding: false, label: 'folllowers' },
+    { id: 'name', numeric: true, disablePadding: false, label: 'SNo' },
+    { id: 'calories', numeric: false, disablePadding: false, label: 'folllowers' },
+    { id: 'fat', numeric: false, disablePadding: false, label: 'Userprofile Name' },
   ];
 
+  // function removeDelete(param) {
+  //   return new Promise(resolve => {
+  //     for(let i = 0; i < param.length; i++) {
+  //       if(param[i].id === 'Delete') {
+  //         param.splice(i, 1)
+  //         resolve(param)
+  //         break;
+  //       }
+  //     }
+  //   })
+  // }
   
-  
-   function RequestTableHead(props) {
+   function TopicTableHead(props) {
     const { classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
     const createSortHandler = (property) => (event) => {
       onRequestSort(event, property);
@@ -149,12 +158,9 @@ export default function UserTable() {
       <TableHead>
         <TableRow>
           {headCells.map((headCell) => (
-            role != 'admin' && headCell.id === 'Delete' ? 
-            null
-            : 
             <TableCell
               key={headCell.id}
-              align={headCell.id=='name' ? 'left' : 'center'}
+              align={headCell.numeric ? 'left' : 'center'}
               padding={headCell.disablePadding ? 'none' : 'default'}
               sortDirection={orderBy === headCell.id ? order : false}
             >
@@ -177,7 +183,7 @@ export default function UserTable() {
     );
   }
   
-  RequestTableHead.propTypes = {
+  TopicTableHead.propTypes = {
     classes: PropTypes.object.isRequired,
     numSelected: PropTypes.number.isRequired,
     onRequestSort: PropTypes.func.isRequired,
@@ -207,7 +213,7 @@ export default function UserTable() {
     },
   }));
   
-  const RequestTableToolbar = (props) => {
+  const TopicTableToolbar = (props) => {
     const classes = useToolbarStyles();
     const { numSelected } = props;
     const [dailog, setdailog] = React.useState(false);
@@ -232,8 +238,7 @@ export default function UserTable() {
           </Typography>
         ) : (
           <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-          {
-            role == 'admin' ?
+       
             <Button
               variant="contained"
               color="secondary"
@@ -243,9 +248,8 @@ export default function UserTable() {
             >
               UPLOAD TOPIC
             </Button>
-            :
-            null
-          }
+         
+          
             
           </Typography>
         )}
@@ -265,7 +269,7 @@ export default function UserTable() {
         )}
         {
           dailog?
-          <FormDialog open={true} onClose={handleClose} />
+          <FormDialog open={true} onClose={handleClose} loadTopic={getTopics}/>
           :
           null
         }
@@ -273,14 +277,30 @@ export default function UserTable() {
     );
   };
   
-  RequestTableToolbar.propTypes = {
+  TopicTableToolbar.propTypes = {
     numSelected: PropTypes.number.isRequired,
   };
   
  
- 
-  const isSelected = (name) => selected.indexOf(name) !== -1;
-  const emptyRows = rowsPerPage - Math.min(rowsPerPage, rowData.length - page * rowsPerPage);
+  const useQuery = () => {
+    return new URLSearchParams(useLocation().search);
+  }
+  const query = useQuery();
+
+  useEffect(() => {
+  const id =  query.get('id')
+    getRequestById(id)
+      .then((response) => {
+        if(response && response.error && response.error.message == 'Authorization Required'){
+            console.log('slllll*********************')
+        }
+        rows= response && response.data ? response.data.followersData : []
+        setRows(rows)
+        console.log("response",rows)
+      })
+    }, true);
+
+  
  
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -290,7 +310,12 @@ export default function UserTable() {
 
   const handleSelectAllClick = (event) => {
     console.log("select event ocue",event)
-   
+    // if (event.target.checked) {
+    //   const newSelecteds = rows.map((n) => n.name);
+    //   setSelected(newSelecteds);
+    //   return;
+    // }
+    // setSelected([]);
   };
 
   const requestSearch = (searchedVal) => {  
@@ -323,6 +348,12 @@ export default function UserTable() {
     setDense(event.target.checked);
   };
 
+  
+
+  const isSelected = (name) => selected.indexOf(name) !== -1;
+
+  const emptyRows = rowsPerPage - Math.min(rowsPerPage, rowData.length - page * rowsPerPage);
+
  
   function displayDate(date) {
     console.log("djfdkjfk", new Date(date).getFullYear()+'-0'+new Date(date).getMonth()+'-'+new Date(date).getDate())
@@ -339,41 +370,11 @@ export default function UserTable() {
     console.log('handleChildClick');
   }
 
-  console.log("row",rows)
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <RequestTableToolbar numSelected={selected.length} />
-       { role == 'admin' ? 
-          <div>
-            <TextField
-            id="date"
-            label="From Date"
-            type="date"
-            defaultValue={displayDate(fromDate)}
-            value={fromDate}
-            className={classes.textField}
-            onChange = {(e,fdate) => setfrom(e)}
-            InputLabelProps={{
-              shrink: true,
-            }}
-          />
-           <TextField
-            id="date"
-            label="To Date"
-            type="date"
-            value={toDate}
-            defaultValue={displayDate(toDate)}
-            onChange = {(e,fdate) => settoDate(e.target.value)}
-            className={classes.textField}
-            InputLabelProps={{
-              shrink: true,
-            }}
-          />
-          
-        </div>
-        : null
-       }
+        <TopicTableToolbar numSelected={selected.length} />
+  
         <TableContainer>
           <Table
             className={classes.table}
@@ -381,7 +382,7 @@ export default function UserTable() {
             size={dense ? 'small' : 'medium'}
             aria-label="enhanced table"
           >
-            <RequestTableHead
+            <TopicTableHead
               classes={classes}
               numSelected={selected.length}
               order={order}
@@ -392,7 +393,7 @@ export default function UserTable() {
             />
             <TableBody style={{position:'relative'}}>
               {
-                rows && rows.length < 1 ?
+                rowData && rowData.length < 1 ?
                   <div style={{position:"absolute",right:'45%',top:'40%'}}>
                     <h6 style={{textAlign:'center'}}>
                       No Records found
@@ -401,7 +402,7 @@ export default function UserTable() {
                  :
                  null
               }
-              {stableSort(rows, getComparator(order, orderBy))
+              {stableSort(rowData, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
                   const isItemSelected = isSelected(row.name);
@@ -416,11 +417,12 @@ export default function UserTable() {
                       key={row.name}
                       selected={isItemSelected}
                     >
-                      <TableCell   style={{color:'blue'}}  align="left">{row.name}</TableCell>
-                      <TableCell align="center">{row.calories}</TableCell>
-                      <TableCell align="center">{row.carbs}</TableCell>
-                      <TableCell align="center">{row.fat}</TableCell>
-                     
+                      <TableCell   style={{color:'blue'}} component={Link}
+                      to={ "/admin/topicDetails"} align="left">{index + 1}</TableCell>
+                      <TableCell align="center">{row.username}</TableCell>
+                      <TableCell align="center">{row.followers}</TableCell>
+                    
+                    
                     </TableRow>
                   );
                 })}

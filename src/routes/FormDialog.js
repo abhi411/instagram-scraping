@@ -8,39 +8,42 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { OpenInBrowserOutlined } from '@material-ui/icons';
 import {toast} from 'react-toastify';
+import {createRequest} from '../services/request';
 export default function FormDialog(props) {
   const { onClose, selectedValue, open , loadTopic } = props;
-  var file = ""
+  var username = ""
   const handleClose = () => {
     onClose(selectedValue);
   };
 
   const handleSubmit = () => {
-  
-}
+    if(!username) {
+      alert('Please enter the username!')
+    }
+    else {
+      let req = {
+        "username": username,
+        "userId":localStorage.getItem('userId')
+      }
+      createRequest(req)
+       .then((response) => {
+        if(response && response.error && response.error.message == 'Authorization Required'){
+            console.log('slllll*********************')
+        }
+       else {
+            onClose(selectedValue);
+            loadTopic();
+        }
+      })
+    }
+  }
 
-function reverseString(str) {
-  let splitString = str.split(""); // var splitString = "hello".split("");
-  let reverseArray = splitString.reverse(); // var reverseArray = ["h", "e", "l", "l", "o"].reverse();
-  let joinArray = reverseArray.join(""); // var joinArray = ["o", "l", "l", "e", "h"].join("");
-  return joinArray; // "olleh"
-  }
-  
-  function getFile(ev) {
-  if(ev && ev.target && ev.target.files) {
-   file = ev.target.files[0] ? ev.target.files[0] : null
-  if (file) {
-    console.log(reverseString(reverseString(file.name).split(".")[0]).toLowerCase())
-  if (reverseString(reverseString(file.name).split(".")[0]).toLowerCase() == 'json') {
-    // fileUpload()
-  //PASS UPLOAD FUNCTION HERE
-  }
-  else {
-    file =null
-    alert('Please select JSON files only!')
-  }
-  }
-  }
+
+  function getUsername(ev) {
+    console.log("ev",ev.target.value)
+    if(ev && ev.target && ev.target.value) {
+      username = ev.target.value
+    }
   }
   
 
@@ -49,18 +52,18 @@ function reverseString(str) {
   return (
     <div>
       <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">Upload Topics</DialogTitle>
+        <DialogTitle id="form-dialog-title">Get Followers</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Please choose the Json file from your system directory to upload the topics.
+            Please enter the instragram username to get the top 10 followers.
           </DialogContentText>
           <TextField
             autoFocus
             margin="dense"
             id="topic"
-            label="Topic File"
-            type="file"
-            onChange={getFile}
+            label="Username"
+            type="input"
+            onChange={getUsername}
             fullWidth
           />
         </DialogContent>
@@ -69,7 +72,7 @@ function reverseString(str) {
             Cancel
           </Button>
           <Button onClick={handleSubmit} variant="contained" color="Secondary">
-            Upload
+            Submit
           </Button>
         </DialogActions>
       </Dialog>
