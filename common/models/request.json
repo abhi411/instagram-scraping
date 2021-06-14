@@ -1,0 +1,34 @@
+{
+  "name": "Request",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "createdAt": {
+      "type": "date"
+    },
+    "updatedAt": {
+      "type": "date"
+    },
+    "followers": {
+      "type": "number",
+      "default": 0
+    },
+    "status": {
+      "type": "string",
+      "default": "pending"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "Users": {
+      "type": "belongsTo",
+      "model": "Users",
+      "foreignKey": "userId"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

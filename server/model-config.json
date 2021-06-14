@@ -1,0 +1,28 @@
+{
+  "_meta": {
+    "sources": [
+      "loopback/common/models",
+      "loopback/server/models",
+      "../common/models",
+      "./models"
+    ],
+    "mixins": [
+      "loopback/common/mixins",
+      "loopback/server/mixins",
+      "../common/mixins",
+      "./mixins"
+    ]
+  },
+  "Remotemethod": {
+    "dataSource": "instraScraping",
+    "public": true
+  },
+  "Users": {
+    "dataSource": "instraScraping",
+    "public": true
+  },
+  "Request": {
+    "dataSource": "instraScraping",
+    "public": true
+  }
+}
