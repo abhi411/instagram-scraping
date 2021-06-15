@@ -11,7 +11,7 @@ module.exports = function(Remotemethod) {
         await client.login()
         const me = await client.getUserByUsername({ username: data.username})
         console.log("me",me)
-         var usr = await Remotemethod.app.models.Request.create({"createdAt": new Date(), "username": data.username, "status":"pending","follower": me.edge_followed_by.count,"userId":data.userId})
+         var usr = await Remotemethod.app.models.Request.create({"createdAt": new Date(), "username": data.username, "status":"In Progress","follower": me.edge_followed_by.count,"userId":data.userId})
         var followers = await client.getFollowers({ userId: me.id, first:100 })
         console.log("followers",followers)
         await getCount(followers.data,usr.id, client)

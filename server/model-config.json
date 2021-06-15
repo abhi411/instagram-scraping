@@ -13,6 +13,28 @@
       "./mixins"
     ]
   },
+  "User": {
+    "dataSource": "instraScraping"
+  },
+  "AccessToken": {
+    "dataSource": "instraScraping",
+    "public": true
+  },
+  "ACL": {
+    "dataSource": "instraScraping",
+    "public": false
+  },
+  "RoleMapping": {
+    "dataSource": "instraScraping",
+    "public": false,
+    "options": {
+      "strictObjectIDCoercion": true
+    }
+  },
+  "Role": {
+    "dataSource": "instraScraping",
+    "public": false
+  },
   "Remotemethod": {
     "dataSource": "instraScraping",
     "public": true
