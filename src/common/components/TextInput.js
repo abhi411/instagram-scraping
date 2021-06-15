@@ -27,8 +27,8 @@ function TextInput(props){
     }
 
     return (
-        <div>
-            <label htmlFor={props.id.toString()}>{props.label}</label>
+        <div class="form-group mb-4">
+            <label  class="sr-only" htmlFor={props.id.toString()}>{props.label}</label>
             <input
                 value={props.value}
                 type={props.type}
@@ -36,7 +36,7 @@ function TextInput(props){
                 className={`form-control ${props.inputClass} ${htmlClass}`}
                 id={`id_${props.label}`}
                 placeholder={props.placeholder} />
-            {error ?
+               {error ?
                 <div className="invalid-feedback">
                     {error}
                 </div> : null

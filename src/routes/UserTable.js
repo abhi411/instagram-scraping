@@ -130,9 +130,9 @@ export default function UserTable() {
   }
   
   let headCells = [
-    { id: 'name', numeric: true, disablePadding: false, label: 'SNo' },
-    { id: 'calories', numeric: false, disablePadding: false, label: 'folllowers' },
-    { id: 'fat', numeric: false, disablePadding: false, label: 'Userprofile Name' },
+    { id: 'name', numeric: true, disablePadding: false, label: 'S. No.' },
+    { id: 'calories', numeric: false, disablePadding: false, label: 'Followers' },
+    { id: 'fat', numeric: false, disablePadding: false, label: 'UserProfile Name' },
   ];
 
   // function removeDelete(param) {
@@ -403,7 +403,6 @@ export default function UserTable() {
                  null
               }
               {stableSort(rowData, getComparator(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
                   const isItemSelected = isSelected(row.name);
                   const labelId = `enhanced-table-checkbox-${index}`;
@@ -434,15 +433,7 @@ export default function UserTable() {
             </TableBody>
           </Table>
         </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={rowData.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onChangePage={handleChangePage}
-          onChangeRowsPerPage={handleChangeRowsPerPage}
-        />
+       
       </Paper>
       {/* <FormControlLabel
         control={<Switch checked={dense} onChange={handleChangeDense} />}

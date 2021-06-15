@@ -122,7 +122,7 @@ export default function PersistentDrawerRight() {
           >
           </IconButton>
          
-          <Avatar className={classes.orange}>J</Avatar>
+          <Avatar className={classes.orange}>A</Avatar>
          
 
         </Toolbar>

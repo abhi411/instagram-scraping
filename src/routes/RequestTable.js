@@ -133,10 +133,10 @@ export default function UserTable() {
   }
   
   let headCells = [
-    { id: 'name', numeric: false, disablePadding: false, label: 'SNo' },
+    { id: 'name', numeric: true, disablePadding: false, label: 'S. No.' },
+    { id: 'calories', numeric: false, disablePadding: false, label: 'UserProfile Name' },
+    { id: 'fat', numeric: false, disablePadding: false, label: 'Followers' },
     { id: 'datetime', numeric: false, disablePadding: false, label: 'Requested Date' },
-    { id: 'calories', numeric: false, disablePadding: false, label: 'Userprofile Name' },
-    { id: 'fat', numeric: false, disablePadding: false, label: 'folllowers' },
     { id: 'carbs', numeric: false, disablePadding: false, label: 'Resolved Date' },
     { id: 'status', numeric: false, disablePadding: false, label: 'Status' },
     { id: 'btn', numeric: false, disablePadding: false, label: 'View Details' }
@@ -167,7 +167,7 @@ export default function UserTable() {
           {headCells.map((headCell) => (
             <TableCell
               key={headCell.id}
-              align={headCell.numeric ? 'right' : 'left'}
+              align={headCell.numeric ? 'left' : 'center'}
               padding={headCell.disablePadding ? 'none' : 'default'}
               sortDirection={orderBy === headCell.id ? order : false}
             >
@@ -368,6 +368,15 @@ export default function UserTable() {
   const handledailog = (value) => {
     setdailog(value)
   }
+  const showdata = (value) =>{
+    var date = new Date(value);
+      return value? date.getDate()+
+      "/"+(date.getMonth()+1)+
+      "/"+date.getFullYear()+
+      " "+date.getHours()+
+      ":"+date.getMinutes()+
+      ":"+date.getSeconds() : '_'
+  }
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
@@ -378,9 +387,8 @@ export default function UserTable() {
               color="secondary"
               onClick={()=>setdailog(true)}
               className={classes.button}
-              endIcon={<Icon></Icon>}
             >
-              Get Followers
+            Get Followers
             </Button>
           </div>
         <TableContainer>
@@ -427,12 +435,12 @@ export default function UserTable() {
                     >
                       <TableCell   style={{color:'blue'}} component={Link}
                       to={ "/admin/topicDetails"} align="left">{index + 1}</TableCell>
-                      <TableCell align="left">{row.createdAt}</TableCell>
-                      <TableCell align="right">{row.username}</TableCell>
-                      <TableCell align="right">{row.followers}</TableCell>
-                      <TableCell align="right">{row.updatedAt}</TableCell>
-                      <TableCell align="left">{row.status}</TableCell>
-                      <TableCell align="left" onClick={()=>history.push("/user/request?id="+row.id)} align="left">
+                      <TableCell align="center">{row.username}</TableCell>
+                      <TableCell align="center">{row.follower}</TableCell>
+                      <TableCell align="center">{showdata(row.createdAt)}</TableCell>
+                      <TableCell align="center">{showdata(row.updatedAt)}</TableCell>
+                      <TableCell align="center">{row.status}</TableCell>
+                      <TableCell align="center" onClick={()=>history.push("/user/request?id="+row.id)} >
                       <Button variant="contained" color="primary">
                         View Details
                       </Button>
