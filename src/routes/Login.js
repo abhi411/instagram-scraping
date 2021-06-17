@@ -64,6 +64,8 @@ const Login = () => {
         if(response?.data?.id) {
           localStorage.setItem('token',response?.data?.id)
           localStorage.setItem('userId',response?.data?.userId)
+          localStorage.setItem('fname',response?.data?.user?.fName)
+
           history.push("/user");
         }
         else {

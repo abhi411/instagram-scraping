@@ -3,7 +3,7 @@ import axios from '../instances';
 
 
 export const login=(body)=>{
-  return axios.post('/Users/login',body)
+  return axios.post('/Users/login?include=user',body)
 }
 
 export const addUser=(body)=>{

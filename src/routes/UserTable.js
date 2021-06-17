@@ -133,6 +133,7 @@ export default function UserTable() {
     { id: 'name', numeric: true, disablePadding: false, label: 'S. No.' },
     { id: 'fat', numeric: false, disablePadding: false, label: 'UserProfile Name' },
     { id: 'calories', numeric: false, disablePadding: false, label: 'Followers' },
+    { id: 'uname', numeric: false, disablePadding: false, label: 'Name' },
 
   ];
 
@@ -421,6 +422,7 @@ export default function UserTable() {
                       to={ "/admin/topicDetails"} align="left">{index + 1}</TableCell>
                       <TableCell align="center">{row.username}</TableCell>
                       <TableCell align="center">{row.followers}</TableCell>
+                      <TableCell align="center">{row.name}</TableCell>
                     
                     
                     </TableRow>

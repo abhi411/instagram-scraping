@@ -134,12 +134,12 @@ export default function UserTable() {
   
   let headCells = [
     { id: 'name', numeric: true, disablePadding: false, label: 'S. No.' },
-    { id: 'calories', numeric: false, disablePadding: false, label: 'UserProfile Name' },
+    { id: 'calories', numeric: false, disablePadding: false, label: 'User Profile Name' },
     { id: 'fat', numeric: false, disablePadding: false, label: 'Followers' },
     { id: 'datetime', numeric: false, disablePadding: false, label: 'Requested Date' },
     { id: 'carbs', numeric: false, disablePadding: false, label: 'Resolved Date' },
     { id: 'status', numeric: false, disablePadding: false, label: 'Status' },
-    { id: 'btn', numeric: false, disablePadding: false, label: 'View Details' }
+    { id: 'btn', numeric: false, disablePadding: false, label: 'Action' }
   ];
 
   // function removeDelete(param) {

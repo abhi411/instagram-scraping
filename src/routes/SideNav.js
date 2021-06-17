@@ -91,7 +91,8 @@ export default function PersistentDrawerRight() {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-
+  let fname = localStorage.getItem('fname')
+ 
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -122,7 +123,7 @@ export default function PersistentDrawerRight() {
           >
           </IconButton>
          
-          <Avatar className={classes.orange}>A</Avatar>
+          <Avatar className={classes.orange}>{fname.charAt(0)}</Avatar>
          
 
         </Toolbar>
