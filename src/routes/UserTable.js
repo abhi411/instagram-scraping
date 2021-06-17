@@ -422,7 +422,7 @@ export default function UserTable() {
                       to={ "/admin/topicDetails"} align="left">{index + 1}</TableCell>
                       <TableCell align="center">{row.username}</TableCell>
                       <TableCell align="center">{row.followers}</TableCell>
-                      <TableCell align="center">{row.name}</TableCell>
+                      <TableCell align="center">{row.name ? row.name : '-'}</TableCell>
                     
                     
                     </TableRow>
