@@ -10,6 +10,8 @@ import "../styles/login.scss";
 import { ChangeHistory } from "@material-ui/icons";
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
+import {addUser} from "../services/login"
+
 import {
   useHistory 
  } from "react-router-dom";
@@ -19,36 +21,31 @@ const useStyles = makeStyles((theme) => ({
       margin: theme.spacing(1),
       width: '50ch',
     },
+    textField: {
+      marginLeft: theme.spacing(1),
+      marginRight: theme.spacing(1),
+      width: '50ch',
+    },
   },
 }));
 const Signup = () => {
+  const classes = useStyles();
   const [formState, setFormState] = useState({
     username: { error: "", value: "" },
     password: { error: "", value: "" }
   });
-  const [islogin, setLogin] = React.useState(true);
+  const [email, setEmail] = React.useState('');
+  const [fname, setfname] = React.useState('');
+  const [lname, setlname] = React.useState('');
+  const [username, setusername] = React.useState('');
+  const [pass, setpass] = React.useState('');
+
   let history = useHistory();
   function hasFormValueChanged(model) {
     setFormState({ ...formState, [model.field]: { error: model.error, value: model.value } });
   }
 
-  function submit(e) {
-    history.push("/user")
-
-    console.log("onsbmit called",formState.username.value,formState.password.value)
-    e.preventDefault();
-    if(isFormInvalid()) { return; }
-    else {
-      if(formState.username.value == 'admin' && formState.password.value == 'pas'){
-        console.log("correct")
-     
-      }
-      else{
-        toast.error('Usern  ame or password incorrect', 
-        {position: toast.POSITION.BOTTOM_CENTER})
-      }
-    }
-  }
+  
 
   function route() { 
     console.log("route claase")
@@ -63,6 +60,43 @@ const Signup = () => {
     let isError = isFormInvalid();
     return isError ? "disabled" : "";
   }
+
+  const handleSubmit = () => {
+    if(fname && email && lname && username && pass) {
+      let body ={
+        'fName':fname,
+        'email':email,
+        'lname':lname,
+        'username':username,
+        'password':pass
+      }
+      console.log(body,"boy")
+      addUser(body)
+      .then((response) => {
+        console.log("Response")
+         if(response && response.error){
+             console.log('slllll*********************')
+             toast.error(response.error.message, {
+              position: toast.POSITION.BOTTOM_CENTER
+            });
+         }
+         else{
+          // history.push("/")
+           toast.success('Customer created successfully!', {
+              position: toast.POSITION.BOTTOM_CENTER
+            });
+            history.push("/")
+         }
+      })
+    }
+    else {
+      toast.error('Please fill all the fields', {
+        position: toast.POSITION.BOTTOM_CENTER
+      });
+    }
+    
+};
+
 
   return (
     <div  class="d-flex align-items-center min-vh-100 py-3 py-md-0">
@@ -79,27 +113,69 @@ const Signup = () => {
               <img src={logo} class="logo" />
               </div>
               <p class="login-card-description">Signup your account</p>
-                 <form onSubmit={submit}>
+                 <form onSubmit={handleSubmit}>
                  <div class="form-group">
-                    <label for="email" class="sr-only">Email</label>
-                    <input type="email" name="email" id="email" class="form-control" placeholder="Email address"></input>
+                 <TextField id="input_email"
+                 variant="outlined"
+                  field="email"
+                  value={email}
+                  onChange = {(e,email) => setEmail(e.target.value)}
+                  maxLength={100}
+                  className={classes.textField}
+                  size="small"
+                  fullWidth
+                  placeholder="Email" />
+                  </div>
+                 <div class="form-group">
+                 <TextField id="input_fname"
+                  field="fname"
+                  value={fname}
+                  variant="outlined"
+                  size="small"
+                  fullWidth
+                  onChange = {(e,fname) => setfname(e.target.value)}
+                  required={true}
+                  maxLength={100}
+                  placeholder="First Name" />
                   </div>
                   <div class="form-group">
-                    <label for="email" class="sr-only">First Name</label>
-                    <input type="text" name="fname" id="fname" class="form-control" placeholder="First Name"></input>
+                 <TextField id="input_lname"
+                  field="lname"
+                  fullWidth
+                  variant="outlined"
+                  size="small"
+                  value={lname}
+                  onChange = {(e,lname) => setlname(e.target.value)}
+                  required={true}
+                  maxLength={100}
+                  placeholder="Last Name" />
                   </div>
                   <div class="form-group">
-                    <label for="lastName" class="sr-only">Last Name</label>
-                    <input type="text" name="lastName" id="lastName" class="form-control" placeholder="Last Name"></input>
+                 <TextField id="input_username"
+                  field="username"
+                  variant="outlined"
+                  size="small"
+                  fullWidth
+                  value={username}
+                  onChange = {(e,username) => setusername(e.target.value)}
+                  required={true}
+                  maxLength={100}
+                  placeholder="User Name" />
                   </div>
                   <div class="form-group">
-                    <label for="lastName" class="sr-only">User Name</label>
-                    <input type="text" name="username" id="username" class="form-control" placeholder="User Name"></input>
+                 <TextField id="input_pass"
+                  field="pass"
+                  value={pass}
+                  fullWidth
+                  size="small"
+                  onChange = {(e,pass) => setpass(e.target.value)}
+                  required={true}
+                  variant="outlined"
+                  type="password"
+                  maxLength={100}
+                  placeholder="Password" />
                   </div>
-                  <div class="form-group mb-4">
-                    <label for="password" class="sr-only">Password</label>
-                    <input type="password" name="password" id="password" class="form-control" placeholder="***********"></input>
-                  </div>
+                 
                   <button
                    name="login" id="login"
                     className={`btn btn-block login-btn mb-4`}
@@ -107,7 +183,7 @@ const Signup = () => {
                     Sign Up
                   </button>
                 </form>
-                <p class="login-card-footer-text">Do you have an account? <a href='javascript:void(0)' onClick={()=> setLogin(false)} href="#!" class="text-reset">Login here</a></p>
+                <p class="login-card-footer-text">Do you have an account? <a href='javascript:void(0)' onClick={()=>history.push('/')} href="#!" class="text-reset">Login here</a></p>
                 <nav class="login-card-footer-nav">
                   <a href="#!">Terms of use.</a>
                   <a href="#!">Privacy policy</a>

@@ -6,7 +6,9 @@ export const login=(body)=>{
   return axios.post('/Users/login',body)
 }
 
-
+export const addUser=(body)=>{
+  return axios.post('/Users',body)
+}
 
 export const logout=(body)=>{
   let token =  localStorage.getItem('token')
