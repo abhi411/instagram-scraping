@@ -135,7 +135,7 @@ const Login = () => {
                     Login
                    </button>
                 </form>
-                <a href="#!" class="forgot-password-link">Forgot password?</a>
+                {/* <a href="#!" class="forgot-password-link">Forgot password?</a> */}
                 <p class="login-card-footer-text">Don't have an account? <a href='javascript:void(0)' onClick={()=> gotoSignUp()} href="#!" class="text-reset">Register here</a></p>
                 <nav class="login-card-footer-nav">
                   <a href="#!">Terms of use.</a>

@@ -20,6 +20,10 @@ import RequestDetails from './RequestDetails';
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Avatar from '@material-ui/core/Avatar';
 import { deepOrange, deepPurple } from '@material-ui/core/colors';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import {logout} from '../services/login';
+import { useHistory } from "react-router-dom";
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -92,7 +96,24 @@ export default function PersistentDrawerRight() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   let fname = localStorage.getItem('fname')
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  let history = useHistory();
  
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+    logout()
+    .then((response) => {
+      console.log("response",response)
+      history.push("/");
+      localStorage.clear()
+      
+   })
+
+  };
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -123,8 +144,16 @@ export default function PersistentDrawerRight() {
           >
           </IconButton>
          
-          <Avatar className={classes.orange}>{fname.charAt(0)}</Avatar>
-         
+          <Avatar onClick={handleClick} className={classes.orange}>{fname.charAt(0)}</Avatar>
+            <Menu
+            id="simple-menu"
+            anchorEl={anchorEl}
+            keepMounted
+            open={Boolean(anchorEl)}
+            onClose={handleClose}
+          >
+            <MenuItem onClick={handleClose}>Logout</MenuItem>
+          </Menu>
 
         </Toolbar>
       </AppBar>

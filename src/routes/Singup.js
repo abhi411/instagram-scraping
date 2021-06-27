@@ -63,6 +63,7 @@ const Signup = () => {
 
   const handleSubmit = () => {
     if(fname && email && lname && username && pass) {
+      console.log("vvbvbvbv found")
       let body ={
         'fName':fname,
         'email':email,
@@ -90,6 +91,8 @@ const Signup = () => {
       })
     }
     else {
+      console.log("fields no")
+
       toast.error('Please fill all the fields', {
         position: toast.POSITION.BOTTOM_CENTER
       });
@@ -123,6 +126,7 @@ const Signup = () => {
                   maxLength={100}
                   className={classes.textField}
                   size="small"
+                  required={true}
                   fullWidth
                   placeholder="Email" />
                   </div>
