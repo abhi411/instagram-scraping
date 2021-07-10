@@ -4,24 +4,38 @@ module.exports = function(Remotemethod) {
          
   Remotemethod.getFollowers = async function(data,cb) {
       const Instagram = require('instagram-web-api')
-      const  username =  "rockingyash7"
-      const password = "Test@123"
-      const client = new Instagram({ username, password })
+      const  username =  "rsahuppp"
+      const password = "test1234"
+      const client = new Instagram({ username, password },{proxy: 'http://sp43962951:test1234@us.smartproxy.com:10001'})
+      console.log("called")
       ;(async () => {
         await client.login()
         const me = await client.getUserByUsername({ username: data.username})
         console.log("me",me)
          var usr = await Remotemethod.app.models.Request.create({"createdAt": new Date(), "username": data.username, "status":"In Progress","follower": me.edge_followed_by.count,"userId":data.userId})
-        var followers = await client.getFollowers({ userId: me.id, first:100 })
-        console.log("followers",followers)
-        await getCount(followers.data,usr.id, client)
-        return {
-          status:true,
-          statusCode:200
-        }
+          loopFollower(me.edge_followed_by.count,usr.id, client,me.id);
+        return(null, {status:200, message:"found"})
 
       })()
     }
+
+  async function loopFollower(totalFollow, userId, client, meId) {
+    let followData = [], hitCount = 0;
+    let looptill = Math.ceil(totalFollow/50);
+    for(let i=0 ;i <=looptill; i++) { 
+      if(followData.length >= totalFollow) {
+        console.log("followers total",followData.length,totalFollow)
+         await getCount(followers.data,userId, client) 
+        break;
+     }
+     else {
+      var followers = await client.getFollowers({ userId: meId, first:totalFollow })
+      hitCount++;
+      followData= [...followData, ...followers.data]
+      console.log("followers",looptill,hitCount,followers,followData.length,meId,userId,totalFollow)
+     }
+    }
+  }
 
     function addfollow(followers,count, username) {
      return new Promise(async function(resolve,reject){
