@@ -433,8 +433,7 @@ export default function UserTable() {
                       key={row.name}
                       selected={isItemSelected}
                     >
-                      <TableCell   style={{color:'blue'}} component={Link}
-                      to={ "/admin/topicDetails"} align="left">{index + 1}</TableCell>
+                      <TableCell   style={{color:'blue'}}  align="left">{index + 1}</TableCell>
                       <TableCell align="center">{row.username}</TableCell>
                       <TableCell align="center">{row.follower}</TableCell>
                       <TableCell align="center">{showdata(row.createdAt)}</TableCell>
