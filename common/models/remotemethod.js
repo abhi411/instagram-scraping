@@ -21,20 +21,25 @@ module.exports = function(Remotemethod) {
 
   async function loopFollower(totalFollow, userId, client, meId) {
     let followData = [], hitCount = 0;
-    let looptill = Math.ceil(totalFollow/50);
-    for(let i=0 ;i <=looptill; i++) { 
-      if(followData.length >= totalFollow) {
-        console.log("followers total",followData.length,totalFollow)
-         await getCount(followers.data,userId, client) 
-        break;
-     }
-     else {
-      var followers = await client.getFollowers({ userId: meId, first:totalFollow })
-      hitCount++;
+    var followers = await client.getFollowers({ userId: meId})
+    followData= [...followData, ...followers.data]
+
+    let nextPage = followers.page_info.has_next_page
+    //true if you have an other page of followers
+    let cursor = followers.page_info.end_cursor
+    //next page of follower
+    //loop to navigate into all the pages of followers
+    while(nextPage) {
+      followers = await client.getFollowers({ userId: meId, first: 50, after: cursor})
+      nextPage = followers.page_info.has_next_page
+      cursor = followers.page_info.end_cursor
       followData= [...followData, ...followers.data]
-      console.log("followers",looptill,hitCount,followers,followData.length,meId,userId,totalFollow)
-     }
+      hitCount++;
+      console.log("followers",hitCount,followers.data[0],followers.data.length,followData.length,meId,userId,totalFollow)
     }
+    console.log("nnnnn")
+    await getCount(followData,userId, client) 
+    
   }
 
     function addfollow(followers,count, username) {
