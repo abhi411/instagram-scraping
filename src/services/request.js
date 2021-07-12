@@ -1,7 +1,8 @@
 import axios from '../instances';
 
 export const getRequest=(nr)=>{
-  return axios.get('/Requests?filter={"order":"createdAt DESC"}')
+  let userId =  localStorage.getItem('userId')
+  return axios.get(`/Requests?filter={"where":{"userId":"${userId}"},"order":"createdAt DESC"}`)
 }
 
 export const updateRequest=( id )=>{

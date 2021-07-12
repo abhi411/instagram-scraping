@@ -370,12 +370,16 @@ export default function UserTable() {
   }
   const showdata = (value) =>{
     var date = new Date(value);
+    var ampm = hours >= 12 ? 'PM' : 'AM';
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    minutes = minutes < 10 ? '0'+minutes : minutes;
       return value? date.getDate()+
       "/"+(date.getMonth()+1)+
       "/"+date.getFullYear()+
-      " "+date.getHours()+
-      ":"+date.getMinutes()+
-      ":"+date.getSeconds() : '_'
+      " "+hours + ':' + minutes + ' ' + ampm : '_'
   }
   return (
     <div className={classes.root}>
@@ -439,7 +443,7 @@ export default function UserTable() {
                       <TableCell align="center">{showdata(row.createdAt)}</TableCell>
                       <TableCell align="center">{showdata(row.updatedAt)}</TableCell>
                       <TableCell align="center">{row.status}</TableCell>
-                      <TableCell align="center" onClick={()=>history.push("/user/request?id="+row.id)} >
+                      <TableCell align="center" onClick={()=>row.status == "In Progress" ? null : history.push("/user/request?id="+row.id)} >
                       <Button variant="contained" color="primary">
                         View Details
                       </Button>
